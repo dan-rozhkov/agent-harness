@@ -1,0 +1,85 @@
+{
+  "name": "@sideform/agent-harness",
+  "version": "0.1.0",
+  "description": "Client-side harness for a chat agent whose tools run in the browser: Surface contract, tool executor, retrying fetch and AI SDK chat transport.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./surface": {
+      "types": "./dist/surface.d.ts",
+      "default": "./dist/surface.js"
+    },
+    "./executor": {
+      "types": "./dist/toolExecutor.d.ts",
+      "default": "./dist/toolExecutor.js"
+    },
+    "./retry-fetch": {
+      "types": "./dist/retryFetch.d.ts",
+      "default": "./dist/retryFetch.js"
+    },
+    "./transport": {
+      "types": "./dist/transport.d.ts",
+      "default": "./dist/transport.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "tsc --noEmit && eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepare": "npm run build",
+    "prepublishOnly": "node -e \"if(!process.env.GITHUB_ACTIONS){console.error('Publish only from the release workflow (.github/workflows/release.yml).');process.exit(1)}\""
+  },
+  "peerDependencies": {
+    "ai": "^6.0.0",
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.2.5",
+    "ai": "^6.0.304",
+    "eslint": "^9.39.5",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.71.2",
+    "vitest": "^4.1.11"
+  },
+  "typesVersions": {
+    "*": {
+      "surface": [
+        "dist/surface.d.ts"
+      ],
+      "executor": [
+        "dist/toolExecutor.d.ts"
+      ],
+      "retry-fetch": [
+        "dist/retryFetch.d.ts"
+      ],
+      "transport": [
+        "dist/transport.d.ts"
+      ]
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": "github:dan-rozhkov/agent-harness"
+}
