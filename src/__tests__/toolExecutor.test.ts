@@ -230,6 +230,25 @@ describe("createToolExecutor timeout budget", () => {
     await expect(p).resolves.toBe('{"error":"Tool call timed out"}');
   });
 
+  it("passes the caller context to timeoutMs", async () => {
+    const seen: unknown[] = [];
+    const execute = createToolExecutor<ToolExecutionContext, string>({
+      resolveHandler: () => async () => "ok",
+      timeoutMs: (name, input, context) => {
+        seen.push([name, input, context]);
+        return 1000;
+      },
+    });
+    const ctx: ToolExecutionContext = { signal: new AbortController().signal };
+    await expect(execute("t", { a: 1 }, ctx, "chat")).resolves.toBe("ok");
+    await execute("t", {}, undefined, "chat");
+    expect(seen).toEqual([
+      ["t", { a: 1 }, ctx],
+      ["t", {}, undefined],
+    ]);
+    expect((seen[0] as unknown[])[2]).toBe(ctx);
+  });
+
   it.each([NaN, undefined, 0, -5, Infinity])("falls back to the default for %s", async (value) => {
     const { execute } = slowExecutor(() => value as number);
     const p = execute("t", {}, undefined, "chat");

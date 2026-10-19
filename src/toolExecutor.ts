@@ -42,9 +42,11 @@ export interface ToolExecutorOptions<Ctx extends ToolExecutionContext, Source ex
   /**
    * Timeout budget for one call, in ms. Read before the handler runs. If it
    * throws or returns a non-finite or non-positive number, the executor uses
-   * DEFAULT_TOOL_TIMEOUT_MS.
+   * DEFAULT_TOOL_TIMEOUT_MS. `context` is the caller's execution context as
+   * passed to `execute` (not the merged-signal copy the handler gets), or
+   * undefined when the caller passed none.
    */
-  timeoutMs: (toolName: string, input: Record<string, unknown>) => number;
+  timeoutMs: (toolName: string, input: Record<string, unknown>, context: Ctx | undefined) => number;
   /** Result string for a tool name with no handler. */
   unknownToolResult?: (toolName: string) => string;
   /** Observer. Errors it throws are swallowed: it can never change a call's result. */
@@ -93,7 +95,7 @@ export function createToolExecutor<Ctx extends ToolExecutionContext, Source exte
       input != null && typeof input === "object" ? (input as Record<string, unknown>) : {};
     let budget = DEFAULT_TOOL_TIMEOUT_MS;
     try {
-      const requested = timeoutMs(toolName, args);
+      const requested = timeoutMs(toolName, args, context);
       if (Number.isFinite(requested) && requested > 0) budget = requested;
     } catch {
       // Keep the default budget.

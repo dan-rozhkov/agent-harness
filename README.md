@@ -50,7 +50,7 @@ const serial = createSerialQueue();
 const execute = createToolExecutor({
   resolveHandler: (name) => handlers[name],
   runQueued: (name, task) => (readOnly.has(name) ? task() : serial(task)),
-  timeoutMs: (name) => 30_000,
+  timeoutMs: (name, input, context) => 30_000,
   onExecuted: (e) => console.log(e.toolName, e.ok, e.errorKind, e.durationMs),
 });
 
@@ -61,7 +61,9 @@ The timeout starts when the task starts, so time spent waiting in the queue is
 not charged to the call. The handler receives a `signal` that aborts when the
 caller aborts or the call times out. If `timeoutMs` throws or returns a
 non-finite or non-positive number, the executor uses `DEFAULT_TOOL_TIMEOUT_MS`
-(30 seconds).
+(30 seconds). `timeoutMs` receives the tool name, the input and the caller's
+context (the value you pass to `execute`, or `undefined`), so a budget can
+depend on per-call data.
 
 ### `@sideform/agent-harness/retry-fetch`
 
