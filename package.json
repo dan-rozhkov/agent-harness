@@ -1,6 +1,6 @@
 {
   "name": "@sideform/agent-harness",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Client-side harness for a chat agent whose tools run in the browser: Surface contract, tool executor, retrying fetch and AI SDK chat transport.",
   "type": "module",
   "license": "MIT",
